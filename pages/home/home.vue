@@ -20,7 +20,7 @@
 		<!-- <scroll-view scroll-y class="page"> -->
 			<view class="cu-list card-menu" style="margin-top:100px">
 				<!-- <view -->
-					<view class="cu-item  " v-for="(item,index) in deviceData" :key="index" >
+					<view class="cu-item  " v-for="(item,index) in listData" :key="index" >
 						<!-- <view class="cu-avatar round lg" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg);"></view> -->
 						<!--menu-avatar  style="justify-content: flex-start;" -->
 						<navigator :url="'/pages/home/deviceDetail/deviceDetail?deviceId='+item.deviceId+'&deviceType='+item.deviceType" hover-class="none">
@@ -51,10 +51,11 @@
 	
 	export default {
 		props: {
-		    deviceData: Array
+		    deviceData: Array  //已弃用
 		},
 		data() {
 			return {
+				listData: '',
 				TabCur: 0,
 				scrollLeft: 0,
 				list:[
@@ -88,28 +89,61 @@
 				// 	deviceName:3,
 				// 	deviceId:123
 				// },],
+				deviceData_: '',
 				
-				
+			}
+		},
+		computed:{
+			datawatch(){
+				// uni.$on('deviceData1',(data)=>{
+				//         console.log('监听到事件来自 update ，携带参数 msg 为：' + data);
+				// 		this.listData = data;
+				//     })
+				// if(this.listData == null){
+				// 	this.listData = this.deviceData
+				// }
+				console.log("store"+uni.getStorageSync('ashbin'))
+				this.listData = uni.getStorageSync('ashbin');
+				console.log(this.listData)
+				console.log("123:"+this.deviceData)
 			}
 		},
 		onLoad() {
 			this.getLocation()
-			// uni.$on('deviceData',(data)=>{
+			// uni.$on('deviceData1',(data)=>{
 			//         console.log('监听到事件来自 update ，携带参数 msg 为：' + data);
+			// 		this.deviceData_ = data;
 			//     })
-			// console.log(this.deviceData)
+			
+			console.log(this.deviceData)
+			console.log(this.listData)
+			
+		},
+		mounted(){
+			// Vue.nextTick(()=>{
+			//   // DOM 更新了
+			//   this.tabSelect(e);
+			//   this.getLocation()
+			// })
+			  this.tabSelect(e);
+			  this.getLocation()
 		},
 		methods: {
 			tabSelect(e) {
 				this.TabCur = e.currentTarget.dataset.id;
 				this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60
 				
-				
+				uni.$on('deviceData1',(data)=>{
+				        console.log('监听到事件来自 update ，携带参数 msg 为：' + data);
+						this.deviceData_ = data;
+				    })
+				console.log(this.deviceData_)
 				console.log(e.target.dataset.id)
 				let num = e.target.dataset.id
 				let token = uni.getStorageSync('storage_key');
 				uni.request({
-				    url: '/api/iot/devices/locations/'+this.list[num].name, //
+				    // url: '/api/iot/devices/locations/'+this.list[num].name, //
+				    url: 'https://linkwireless.cn/api/iot/devices/locations/'+this.list[num].name, //
 				    // url: '/api/iot/devices/locations/'+'qqq', //仅为示例，并非真实接口地址。
 				    data: {
 				    },
@@ -118,7 +152,9 @@
 				    },
 				    success: (res) => {
 				        console.log(res.data);
-						this.deviceData = res.data;
+						// this.deviceData = res.data;
+						uni.setStorageSync('ashbin',res.data);
+						this.listData = res.data;
 				        // this.text = 'request success';
 										  // uni.$emit('deviceData',res.data)
 										  // this.deviceData = res.data

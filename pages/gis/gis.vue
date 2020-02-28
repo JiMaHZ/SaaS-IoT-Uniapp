@@ -103,7 +103,7 @@
 				covers: [],
 				
 				animation:'',
-				
+				iconPath: require('../../static/icon_ashbin_blue.png'),
 				ashbinImg:{
 					img01:require('@/static/ashbin_unknown.png'),  //默认
 					img02:require('@/static/ashbin_unknown.png'),
@@ -149,7 +149,8 @@
 				let token = uni.getStorageSync('storage_key');
 				this.hidden = true;
 				uni.request({
-				    url: '/api/iot/ashbin/status', //仅为示例，并非真实接口地址。
+				    // url: '/api/iot/ashbin/status', //仅为示例，并非真实接口地址。
+				    url: 'https://linkwireless.cn/api/iot/ashbin/status', //仅为示例，并非真实接口地址。
 				    data: {
 						deviceId: e.detail.markerId
 				    },
@@ -216,7 +217,9 @@
 					// },
 					latitude: r1.lat,
 					longitude: r1.lng,
-					iconPath: require('../../static/icon_ashbin_blue.png'),
+					// iconPath: require('../../static/icon_ashbin_blue.png'),
+					iconPath: '/static/icon_ashbin_blue.png',
+					// iconPath: this.iconPath,
 					// left:15,
 					// top:15,
 					width:55.7,

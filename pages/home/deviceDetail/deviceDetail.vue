@@ -300,7 +300,8 @@
 			getDeviceDetail(){
 				let token = uni.getStorageSync('storage_key');
 				uni.request({
-				    url: '/api/iot/devicestatus/detail', //仅为示例，并非真实接口地址。
+				    // url: '/api/iot/devicestatus/detail', //仅为示例，并非真实接口地址。
+				    url: 'https://linkwireless.cn/api/iot/devicestatus/detail', //仅为示例，并非真实接口地址。
 				    data: {
 						deviceId:this.data0.deviceId
 				    },
@@ -319,7 +320,8 @@
 				});
 				
 				uni.request({
-				    url: '/api/iot/ashbin/status', //仅为示例，并非真实接口地址。
+				    // url: '/api/iot/ashbin/status', //仅为示例，并非真实接口地址。
+				    url: 'https://linkwireless.cn/api/iot/ashbin/status', //仅为示例，并非真实接口地址。
 				    data: {
 						deviceId:this.data0.deviceId
 				    },
@@ -352,7 +354,8 @@
 								id:this.ashbinData.deviceId,
 								latitude: r1.lat,
 								longitude: r1.lng,
-								iconPath: require('../../../static/icon_ashbin_blue.png'),
+								// iconPath: require('../../../static/icon_ashbin_blue.png'),
+								iconPath: '/static/icon_ashbin_blue.png',
 								// left:15,
 								// top:-20,
 								width:55.7,
@@ -373,7 +376,8 @@
 				
 				
 				uni.request({
-				    url: '/api/iotPlatform/uploaddata/listByIdAndKey', //仅为示例，并非真实接口地址。
+				    // url: '/api/iotPlatform/uploaddata/listByIdAndKey', //仅为示例，并非真实接口地址。
+				    url: 'https://linkwireless.cn/api/iotPlatform/uploaddata/listByIdAndKey', //仅为示例，并非真实接口地址。
 				    data: {
 						deviceId:this.data0.deviceId,
 						deviceKey:['0B00','0900']

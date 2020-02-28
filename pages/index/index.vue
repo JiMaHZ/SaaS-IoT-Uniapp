@@ -6,7 +6,7 @@
 				<text class="title">{{title}}</text>
 			</view>
 		</view> -->
-		<home v-if="PageCur=='home'" :deviceData.sync='deviceData'></home>
+		<home v-if="PageCur=='home'" :deviceData='deviceData'></home>
 		<gis v-if="PageCur=='gis'" :locationData.sync='locationData'></gis>
 		<user v-if="PageCur=='user'"></user>
 		
@@ -142,7 +142,8 @@
 				// })
 				
 				uni.request({
-				    url: '/api/blade-auth/token?tenantId=000000&account=test&password=123456&type=account', //仅为示例，并非真实接口地址。
+				    // url: '/api/blade-auth/token?tenantId=000000&account=test&password=123456&type=account', //仅为示例，并非真实接口地址。
+				    url: 'https://linkwireless.cn/api/blade-auth/token?tenantId=000000&account=test&password=123456&type=account', //仅为示例，并非真实接口地址。
 				    data: {
 						// tenantId: '000000',
 						// account: 'test',
@@ -167,7 +168,8 @@
 					  }
 						
 						uni.request({
-						    url: '/api/iot/devices/locations/垃圾桶', //仅为示例，并非真实接口地址。
+						    // url: '/api/iot/devices/locations/垃圾桶', //仅为示例，并非真实接口地址。
+							url: 'https://linkwireless.cn/api/iot/devices/locations/垃圾桶', //仅为示例，并非真实接口地址。
 						    data: {
 						    },
 						    header: {
@@ -176,9 +178,10 @@
 						    success: (res) => {
 						        console.log(res.data);
 						        // this.text = 'request success';
-												  // uni.$emit('deviceData',res.data)
-												  this.deviceData = res.data
-												  this.locationData = res.data
+								uni.$emit('deviceData1',res.data)
+								uni.setStorageSync('ashbin',res.data);
+								this.deviceData = res.data
+								this.locationData = res.data
 						    }
 						});
 
