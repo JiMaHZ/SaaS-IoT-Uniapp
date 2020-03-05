@@ -14,7 +14,7 @@
 				<view class="content">
 					<text class="cuIcon-circlefill text-grey"></text>
 					<text class="text-grey">设备名：</text>
-					<text class="text-grey">{{data0.deviceName}}</text>
+					<text class="text-grey text-sm">{{data0.deviceName}}</text>
 				</view>
 				<view class="action">
 					<view class="cu-tag light" :class="data0.deviceStatus?'line-green':'line-grey'">
@@ -27,14 +27,14 @@
 					<text class="cuIcon-infofill text-grey"></text>
 					<!-- <image src="cuIcon-infofill" class="png" mode="aspectFit"></image> -->
 					<text class="text-grey">设备id：</text>
-					<text class="text-grey">{{data0.deviceId}}</text>
+					<text class="text-grey text-sm">{{data0.deviceId}}</text>
 				</view>
 			</view>
 			<view class="cu-item" >
 				<button class="cu-btn content" open-type="contact">
 					<text class="cuIcon-btn text-olive"></text>
 					<text class="text-grey">创建时间：</text>
-					<text class="text-grey">{{data0.createTime}}</text>
+					<text class="text-grey text-sm">{{data0.createTime}}</text>
 				</button>
 			</view>
 		</view>
@@ -123,19 +123,22 @@
 					<text class="text-grey">数据</text>
 				</view>
 				<view class="action">
-					<view class="cu-tag round bg-blue light">2020-01-20 12:00:00</view>
+					<view class="cu-tag round bg-blue light">{{deviceListData[0].modifyTime}}</view>
 				</view>
 			</view>
-			<view class="cu-item" >
+			<view class="cu-item" v-for="(item,index) in deviceListData" :key="index">
 				<view class="content">
 					<text class="cuIcon-circlefill text-grey"></text>
-					<text class="text-grey">日人流量：</text>
+					<text class="text-grey">{{item.keyName}}:&nbsp</text>
+					<text class="text-red margin-lr-xs">
+					{{item.value}}
+					</text>
 					<text class="text-grey">
-					0
+					{{item.unit}}
 					</text>
 				</view>
 			</view>
-			<view class="cu-item" >
+			<!-- <view class="cu-item" >
 				<view class="content">
 					<text class="cuIcon-circlefill text-grey"></text>
 					<text class="text-grey">男厕温度：</text>
@@ -188,7 +191,7 @@
 					0
 					</text>
 				</view>
-			</view>
+			</view> -->
 			
 			
 		</view>
@@ -207,8 +210,34 @@
 <script>
 	import {Convertor} from '@/utils/map/mapConvert.js'
 	export default {
+		// const liveQuery = uni.request({
+		//     // url: '/api/iotPlatform/uploaddata/listByIdAndKey', //仅为示例，并非真实接口地址。
+		//     url: 'https://linkwireless.cn/api/iot/deviceKey/listWithValue', //仅为示例，并非真实接口地址。
+		//     // url: 'http://localhost:38080/iot/deviceKey/listWithValue', //仅为示例，并非真实接口地址。
+		//     data: {
+		// 		deviceId:this.data0.deviceId,
+		// 		// deviceKey:['0B00','0900']
+		//     },
+		//     header: {
+		//         'Blade-Auth': 'bearer '+ token //自定义请求头信息
+		//     },
+		//     success: (res) => {
+		// 		// this.queryTag = true;
+		// 		console.log(res)
+		// 		this.deviceListData = res.data
+		// 			timer = setTimeout(() => {
+		// 				this.liveData()
+		// 			}, 5000)
+		// 	},
+		// 	fail:(res)=>{
+		// 		// this.queryTag = false;
+		// 		 clearTimeout(timer) //清理定时任务
+		// 	}
+		// });
 		data() {
 			return {
+				liveQuery: null, //轮询标签
+				queryTag: true,
 				TabCur: 0,
 				list:[
 					{
@@ -265,6 +294,8 @@
 						require('../../../static/ashbin_warning.png'),  //总故障
 					],
 				},
+				
+				deviceListData:{}
 			};
 		},
 		onLoad(option) {
@@ -276,6 +307,18 @@
 			this.data0.deviceId = option.deviceId;
 			this.getDeviceDetail();
 			// console.log('res'+uni.getStorageSync('storage_key'))
+		},
+		onHide(){
+			this.queryTag = false;
+			console.log("onhide")
+			console.log(this.liveQuery)
+			// this.liveQuery.abort();
+		},
+		onUnload() {
+			this.queryTag = false;
+			console.log("unload")
+			console.log(this.liveQuery)
+			this.liveQuery.abort();
 		},
 		methods:{
 			tabSelect(e) {
@@ -374,21 +417,39 @@
 				    }
 				});
 				
-				
+				this.liveData();
+			},
+			
+			liveData(){
+				let timer
+				let token = uni.getStorageSync('storage_key');
+				// this.liveQuery = 
 				uni.request({
 				    // url: '/api/iotPlatform/uploaddata/listByIdAndKey', //仅为示例，并非真实接口地址。
-				    url: 'https://linkwireless.cn/api/iotPlatform/uploaddata/listByIdAndKey', //仅为示例，并非真实接口地址。
+				    url: 'https://linkwireless.cn/api/iot/deviceKey/listWithValue', //仅为示例，并非真实接口地址。
+				    // url: 'http://localhost:38080/iot/deviceKey/listWithValue', //仅为示例，并非真实接口地址。
 				    data: {
 						deviceId:this.data0.deviceId,
-						deviceKey:['0B00','0900']
+						// deviceKey:['0B00','0900']
 				    },
 				    header: {
 				        'Blade-Auth': 'bearer '+ token //自定义请求头信息
 				    },
 				    success: (res) => {
+						// this.queryTag = true;
 						console.log(res)
+						this.deviceListData = res.data.data
+						if(this.queryTag){
+							timer = setTimeout(() => {
+								this.liveData()
+							}, 30000)
+						}
+					},
+					fail:(res)=>{
+						this.queryTag = false;
+						 clearTimeout(timer) //清理定时任务
 					}
-					});
+				});
 			}
 		}
 	}

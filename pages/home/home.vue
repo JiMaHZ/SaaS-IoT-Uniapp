@@ -26,15 +26,18 @@
 						<navigator :url="'/pages/home/deviceDetail/deviceDetail?deviceId='+item.deviceId+'&deviceType='+item.deviceType" hover-class="none">
 							<view class="flex justify-between align-center padding-lr-xl item">
 								<view class="start" >
-									<view class="text-grey start">设备:{{item.deviceName}}</view>
+									<view class="text-grey start margin-tb-xs"><!--start   -->
+										<text class=" text-sm">设备:</text>
+										<text class="margin-lr-sm text-black">{{item.deviceName}} </text>
+									</view>
 									<view class="text-gray text-sm flex">
 										<view class="text-cut">
 											<text class="cuIcon-infofill text-red  margin-right-xs"></text>
-											{{item.deviceId}}
+											<text class="">{{item.deviceId}}</text>
 										</view> </view>
 								</view>
 								<view class="action " >
-									<view class="text-grey text-xs">12:00</view>
+									<view class="text-grey text-xs"> </view>
 									<view class="cu-tag round  sm" :class="item.deviceStatus==1?'bg-green':'bg-grey'">{{item.deviceStatus==1?'已激活':'未激活'}}</view>
 								</view>
 							</view>
@@ -102,10 +105,10 @@
 				// if(this.listData == null){
 				// 	this.listData = this.deviceData
 				// }
-				console.log("store"+uni.getStorageSync('ashbin'))
+				// console.log("store"+uni.getStorageSync('ashbin'))
 				this.listData = uni.getStorageSync('ashbin');
-				console.log(this.listData)
-				console.log("123:"+this.deviceData)
+				// console.log(this.listData)
+				// console.log("123:"+this.deviceData)
 			}
 		},
 		onLoad() {
@@ -115,9 +118,15 @@
 			// 		this.deviceData_ = data;
 			//     })
 			
-			console.log(this.deviceData)
-			console.log(this.listData)
-			
+			// console.log(this.deviceData)
+			// console.log(this.listData)
+			console.log("onload")
+		},
+		onUnload(){
+			console.log("onunload")
+		},
+		onHide(){
+				console.log("hide")
 		},
 		mounted(){
 			// Vue.nextTick(()=>{
@@ -127,11 +136,21 @@
 			// })
 			  this.tabSelect(e);
 			  this.getLocation()
+			  console.log("mouted")
+		},
+		created(){
+				console.log("created")
+				let tab = uni.getStorageSync('home_tab_cur');
+				// console.log("123:"+tab)
+				if(tab !== undefined){
+					this.TabCur = tab;
+				}
 		},
 		methods: {
 			tabSelect(e) {
 				this.TabCur = e.currentTarget.dataset.id;
 				this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60
+				uni.setStorageSync('home_tab_cur',this.TabCur);  //用于存储首页tab状态
 				
 				uni.$on('deviceData1',(data)=>{
 				        console.log('监听到事件来自 update ，携带参数 msg 为：' + data);
